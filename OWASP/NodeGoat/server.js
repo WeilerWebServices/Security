@@ -4,6 +4,7 @@ var express = require("express");
 var favicon = require("serve-favicon");
 var bodyParser = require("body-parser");
 var session = require("express-session");
+var cookieParser = require("cookie-parser");
 // var csrf = require('csurf');
 var consolidate = require("consolidate"); // Templating library adapter for Express
 var swig = require("swig");
@@ -94,11 +95,15 @@ MongoClient.connect(config.db, function(err, db) {
         // Fix for A3 - XSS
         // TODO: Add "maxAge"
         cookie: {
-            httpOnly: true,
+            httpOnly: false
             // Remember to start an HTTPS server to get this working
             // secure: true
-        },
+        }
+
     }));
+
+    // Access to cookies
+    app.use(cookieParser());
 
     /*
     // Fix for A8 - CSRF
@@ -130,8 +135,12 @@ MongoClient.connect(config.db, function(err, db) {
 
     // Template system setup
     swig.setDefaults({
+        // Autoescape disabled
+        autoescape: false
+        /*
         // Fix for A3 - XSS, enable auto escaping
         autoescape: true // default value
+        */
     });
 
     // Insecure HTTP connection
